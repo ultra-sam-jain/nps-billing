@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automate Flow Ai | Parametric UPS & Battery Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --text: #101828;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --navy: #1a2332;
+      --green: #1e6b3c;
+      --purple: #3d2e7c;
+      --blue: #2563eb;
+      --green-btn: #16a34a;
+      --purple-btn: #7c3aed;
+      --teal: #06b6d4;
+      --danger: #ef4444;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 24%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent 20%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: var(--surface);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+      flex: 0 0 auto;
+    }
+
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+      color: var(--navy);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-copy p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .quote-chip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      min-width: 260px;
+      justify-content: space-between;
+    }
+
+    .quote-copy small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .quote-copy strong {
+      font-size: 24px;
+      line-height: 1;
+      color: var(--navy);
+      letter-spacing: -0.03em;
+    }
+
+    .quote-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.1);
+      display: grid;
+      place-items: center;
+      position: relative;
+      color: var(--blue);
+    }
+
+    .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      border: 2px solid #fff;
+      padding: 0 6px;
+    }
+
+    .main-layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding-right: 384px;
+    }
+
+    .left-panel {
+      flex: 1;
+      min-width: 620px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      color: var(--navy);
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), #fbfcfe);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .section-header strong {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .section-header .pill {
+      background: rgba(15, 23, 42, 0.04);
+      color: var(--muted);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+    }
+
+    .ups-header { box-shadow: inset 0 3px 0 var(--navy); }
+    .battery-header { box-shadow: inset 0 3px 0 var(--green); }
+    .accessory-header { box-shadow: inset 0 3px 0 var(--purple); }
+
+    .section-body {
+      padding: 14px 16px 16px;
+    }
+
+    .filters {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .filters.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .filters.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .field label {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"], input[type="tel"], textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      padding: 11px 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: rgba(37, 99, 235, 0.45);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .loading-shimmer {
+      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
+      background-size: 400% 100%;
+      animation: shimmer 0.9s ease-in-out;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: 0 0; }
+    }
+
+    .results-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      gap: 10px;
+    }
+
+    .result-pill {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .count-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .list-scroll {
+      max-height: 420px;
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+      padding-right: 2px;
+    }
+
+    .product-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fff;
+      animation: fadeUp 0.22s ease both;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.03);
+    }
+
+    .product-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      line-height: 1.35;
+      color: var(--text);
+      line-clamp: 2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-meta {
+      margin-top: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .product-meta strong { color: var(--text); font-size: 14px; }
+
+    .price-request { color: var(--danger); font-weight: 800; }
+
+    .add-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .add-btn.ups { background: var(--blue); }
+    .add-btn.battery { background: var(--green-btn); }
+    .add-btn.accessory { background: var(--purple-btn); }
+
+    .add-btn.pulse { animation: popPulse 0.2s ease; }
+    .header-pop { animation: badgePop 0.15s ease; }
+    .flash-total { animation: flashHighlight 0.35s ease; }
+    .slide-in { animation: slideInRight 0.22s ease; }
+
+    @keyframes popPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes flashHighlight {
+      0% { background: rgba(6, 182, 212, 0); }
+      50% { background: rgba(6, 182, 212, 0.18); }
+      100% { background: rgba(6, 182, 212, 0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(18px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .empty-state {
+      border: 1px dashed #d1d5db;
+      border-radius: 18px;
+      padding: 42px 20px;
+      text-align: center;
+      color: var(--muted);
+      display: grid;
+      gap: 10px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      border: 1px solid var(--purple);
+      background: #fff;
+      color: var(--purple);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.18s ease;
+    }
+
+    .tab.active {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(61, 46, 124, 0.18);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .accessory-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+      padding: 14px;
+      position: relative;
+      min-height: 146px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeUp 0.22s ease both;
+    }
+
+    .accessory-badge {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .accessory-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      line-clamp: 2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      padding-right: 38px;
+    }
+
+    .accessory-footer {
+      margin-top: auto;
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .add-btn.corner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    .sidebar {
+      width: 360px;
+      position: fixed;
+      top: 94px;
+      right: max(20px, calc((100vw - 1400px) / 2 + 20px));
+      max-height: calc(100vh - 118px);
+      overflow: auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-top {
+      background: var(--surface);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .sidebar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-head strong {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 13px;
+      color: var(--navy);
+    }
+
+    .items-badge {
+      background: #dbeafe;
+      color: var(--blue);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-clamp: 2;
+      text-transform: uppercase;
+    }
+
+    .cart-list {
+      display: grid;
+      gap: 8px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .cart-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 11px;
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      position: relative;
+    }
+
+    .cart-card.remove {
+      animation: fadeOut 0.16s ease;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-4px); }
+    }
+
+    .cart-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      flex: 0 0 auto;
+    }
+
+    .cart-icon-box.ups { background: rgba(37, 99, 235, 0.9); }
+    .cart-icon-box.battery { background: rgba(22, 163, 74, 0.9); }
+    .cart-icon-box.accessory { background: rgba(124, 58, 237, 0.9); }
+
+    .cart-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      margin-bottom: 3px;
+    }
+
+    .cart-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      line-clamp: 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .cart-warranty {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .cart-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .remove-btn {
+      border: none;
+      background: transparent;
+      color: var(--danger);
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      margin-top: 2px;
+    }
+
+    .summary-block {
+      background: var(--navy);
+      color: #fff;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .summary-row small {
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .summary-row strong { font-size: 14px; }
+    .summary-divider { height: 1px; background: rgba(255, 255, 255, 0.12); }
+
+    .total-row {
+      color: var(--teal);
+    }
+
+    .total-row strong {
+      color: #fff;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .finalize-btn {
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 14px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .reset-link {
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      text-align: center;
+      width: 100%;
+      padding: 0;
+    }
+
+    .expert-note {
+      background: #fff;
+      border-radius: 22px;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      color: var(--text);
+    }
+
+    .expert-note strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .expert-note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      width: min(100%, 920px);
+      max-height: 92vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+      padding: 24px;
+      position: relative;
+    }
+
+    .modal-print-content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--navy);
+    }
+
+    .close-modal {
+      border: none;
+      background: rgba(15, 23, 42, 0.06);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 20px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .proposal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .proposal-table th, .proposal-table td {
+      border: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .proposal-table th {
+      background: #f8fafc;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .proposal-total {
+      display: grid;
+      gap: 8px;
+      margin-top: 6px;
+      justify-content: end;
+    }
+
+    .proposal-total .line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-width: 320px;
+      font-size: 14px;
+    }
+
+    .proposal-total .grand {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions button {
+      border: none;
+      border-radius: 14px;
+      height: 44px;
+      padding: 0 16px;
+      font-weight: 800;
+    }
+
+    .copy-btn { background: #e0f2fe; color: var(--blue); }
+    .print-btn { background: #d1fae5; color: #047857; }
+
+    .proposal-header-print {
+      display: none;
+    }
+
+    .proposal-customer-print {
+      display: none;
+    }
+
+    .inline-muted { color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 1280px) {
+      .left-panel { min-width: 0; }
+      .sidebar {
+        width: 332px;
+        right: 20px;
+      }
+      .main-layout { padding-right: 352px; }
+    }
+
+    @media (max-width: 1023px) {
+      .main-layout {
+        flex-direction: column;
+        padding-right: 0;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        max-height: none;
+        right: auto;
+      }
+
+      .left-panel {
+        width: 100%;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .quote-chip {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .app-shell { padding: 14px; }
+      .brand-copy h1 { font-size: 22px; }
+      .filters.grid-4, .filters.grid-3, .modal-grid, .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-card { padding: 20px; }
+      .proposal-total .line { min-width: 0; width: 100%; }
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm;
+      }
+
+      html, body {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .app-shell {
+        display: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+
+      .modal-backdrop,
+      .modal-backdrop.open,
+      .modal-backdrop.open * {
+        visibility: visible !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+
+      .modal-backdrop {
+        position: static !important;
+        inset: auto !important;
+        background: #fff !important;
+        display: block !important;
+        padding: 0 !important;
+      }
+
+      .modal-card {
+        width: 100% !important;
+        max-height: none !important;
+        overflow: visible !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      .modal-print-content {
+        gap: 10px !important;
+        color: #000 !important;
+      }
+
+      .modal-head,
+      .modal-actions,
+      .close-modal,
+      .no-print,
+      .modal-grid.no-print {
+        display: none !important;
+      }
+
+      .proposal-header-print {
+        display: block !important;
+        border-bottom: 2px solid #111827;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+      }
+
+      .proposal-header-print h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #111827 !important;
+      }
+
+      .proposal-header-print p {
+        margin: 3px 0 0;
+        color: #374151 !important;
+        font-size: 12px;
+      }
+
+      .proposal-customer-print {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 14px;
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        margin-bottom: 12px;
+        font-size: 11px;
+        color: #111827 !important;
+      }
+
+      .proposal-customer-print div {
+        color: #111827 !important;
+      }
+
+      .proposal-customer-print strong {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #6b7280 !important;
+      }
+
+      .proposal-table {
+        font-size: 11px !important;
+      }
+
+      .proposal-table th,
+      .proposal-table td {
+        color: #111827 !important;
+        background: #fff !important;
+        border-color: #d1d5db !important;
+        padding: 8px 6px !important;
+      }
+
+      .proposal-table th {
+        background: #f3f4f6 !important;
+        font-size: 10px !important;
+        letter-spacing: 0.06em !important;
+      }
+
+      .proposal-total {
+        margin-top: 8px !important;
+        gap: 4px !important;
+      }
+
+      .proposal-total .line {
+        min-width: 0 !important;
+        width: 100% !important;
+        font-size: 12px !important;
+      }
+
+      .proposal-total .grand {
+        font-size: 16px !important;
+        border-top: 1px solid #d1d5db;
+        padding-top: 6px;
+      }
+
+      .inline-muted {
+        display: none !important;
+      }
+    }
+
+    details.section { display: block; }
+    details.section > summary { list-style: none; }
+    details.section > summary::-webkit-details-marker { display: none; }
+    details.section > summary.section-header { cursor: pointer; }
+    details.section > summary.section-header::after {
+      content: '▾';
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 14px;
+      transition: transform 0.18s ease;
+    }
+    details.section[open] > summary.section-header::after { transform: rotate(180deg); }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <div class="brand-wrap">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
+            <rect x="7" y="6" width="10" height="3" rx="1"></rect>
+            <circle cx="8" cy="13" r="1"></circle>
+            <circle cx="12" cy="13" r="1"></circle>
+            <circle cx="16" cy="13" r="1"></circle>
+            <circle cx="8" cy="17" r="1"></circle>
+            <circle cx="12" cy="17" r="1"></circle>
+            <circle cx="16" cy="17" r="1"></circle>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <h1>Automate Flow Ai</h1>
+          <p>Parametric UPS & Battery Calculator</p>
+        </div>
+      </div>
+      <div class="quote-chip" id="quoteChip">
+        <div class="quote-copy">
+          <small>Estimated Quote</small>
+          <strong id="headerTotal">₹0</strong>
+        </div>
+        <div class="quote-meta">
+          <div class="cart-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6L23 6H6"></path>
+            </svg>
+            <span class="badge" id="headerCount">0</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <section class="left-panel">
+        <details class="section" id="ups-section" open>
+          <summary class="section-header ups-header">
+            <strong>🔧 UPS Selection Logic</strong>
+            <span class="pill" id="upsResultsPill">MAIN UNIT · 0 results</span>
+          </summary>
+          <div class="section-body">
+            <div class="filters grid-4">
+              <div class="field">
+                <label for="upsBrand">Brand</label>
+                <select id="upsBrand"></select>
+              </div>
+              <div class="field">
+                <label for="upsCapacity">kVA</label>
+                <select id="upsCapacity"></select>
+              </div>
+              <div class="field">
+                <label for="upsPhase">Phase</label>
+                <select id="upsPhase"></select>
+              </div>
+              <div class="field">
+                <label for="upsVdc">VDC</label>
+                <select id="upsVdc"></select>
+              </div>
+            </div>
+            <div class="results-meta">
+              <span class="result-pill">Live product match</span>
+              <span class="count-chip" id="upsCount">0 items</span>
+            </div>
+            <div class="list-scroll" id="upsList"></div>
+          </div>
+        </details>
+
+        <details class="section" id="battery-section" open>
+          <summary class="section-header battery-header">
+            <strong>🔋 Battery Selection Logic</strong>
+            <span class="pill" id="batteryResultsPill">POWER STORAGE · 0 results</span>
+          </summary>
+          <div class="section-body">
+            <div class="filters grid-3">
+              <div class="field">
+                <label for="batteryType">Type</label>
+                <select id="batteryType"></select>
+              </div>
+              <div class="field">
+                <label for="batteryBrand">Brand</label>
+                <select id="batteryBrand"></select>
+              </div>
+              <div class="field">
+                <label for="batteryAh">AH Rating</label>
+                <select id="batteryAh"></select>
+              </div>
+            </div>
+            <div class="results-meta">
+              <span class="result-pill">Live product match</span>
+              <span class="count-chip" id="batteryCount">0 items</span>
+            </div>
+            <div class="list-scroll" id="batteryList"></div>
+          </div>
+        </details>
+
+        <details class="section" id="accessories-section" open>
+          <summary class="section-header accessory-header">
+            <strong>⚙️ Accessories</strong>
+            <span class="pill" id="accessoryResultsPill">OPTIONAL · 0 results</span>
+          </summary>
+          <div class="section-body">
+            <div class="category-tabs" id="categoryTabs"></div>
+            <div class="results-meta">
+              <span class="result-pill">Live product match</span>
+              <span class="count-chip" id="accessoryCount">0 items</span>
+            </div>
+            <div class="grid-2" id="accessoryGrid"></div>
+          </div>
+        </details>
+      </section>
+
+      <aside class="sidebar">
+        <section class="sidebar-top" id="configPanel">
+          <div class="sidebar-head">
+            <strong>🛒 Configuration</strong>
+            <span class="items-badge" id="itemsBadge">0 items</span>
+          </div>
+          <div id="sidebarContent"></div>
+        </section>
+
+        <section class="summary-block" id="summaryBlock">
+          <div class="summary-row">
+            <small>Subtotal</small>
+            <strong id="subtotalText">₹0</strong>
+          </div>
+          <div class="summary-row">
+            <small>GST (Estimated 18%)</small>
+            <strong id="gstText">₹0</strong>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total-row">
+            <small>TOTAL ESTIMATE</small>
+            <strong id="totalText">₹0</strong>
+          </div>
+          <button class="finalize-btn" id="finalizeBtn">⚡ Finalize Proposal</button>
+          <button class="reset-link" id="resetBtn">Reset Configuration</button>
+        </section>
+
+        <section class="expert-note">
+          <strong>ℹ️ Expert Match Logic</strong>
+          <p>The configurator uses a cascading hierarchy. Selection of Brand narrows Capacity, which narrows Phase, which narrows VDC. This ensures only valid combinations are shown.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="proposalModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-print-content" id="proposalPrintArea">
+        <div class="proposal-header-print">
+          <h1>Automate Flow Ai</h1>
+          <p>Parametric UPS & Battery Configurator</p>
+          <p id="printDateLine"></p>
+        </div>
+
+        <div class="proposal-customer-print">
+          <div><strong>Customer Name</strong><span id="printCustomerName">-</span></div>
+          <div><strong>Company / Organization</strong><span id="printCompanyName">-</span></div>
+          <div><strong>Contact Number</strong><span id="printContactNumber">-</span></div>
+          <div><strong>Site Address</strong><span id="printSiteAddress">-</span></div>
+        </div>
+
+        <div class="modal-head">
+          <div>
+            <h2>📋 Proposal Summary</h2>
+            <p class="inline-muted" style="margin:6px 0 0;">Review customer details, line items, and totals before generating the final quote.</p>
+          </div>
+          <button class="close-modal no-print" id="closeModalBtn" aria-label="Close proposal">×</button>
+        </div>
+
+        <div class="modal-grid no-print">
+          <div class="field"><label for="customerName">Customer Name</label><input id="customerName" type="text" placeholder="Enter customer name"></div>
+          <div class="field"><label for="companyName">Company / Organization</label><input id="companyName" type="text" placeholder="Enter company"></div>
+          <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="tel" placeholder="Enter contact number"></div>
+          <div class="field"><label for="siteAddress">Site Address</label><input id="siteAddress" type="text" placeholder="Enter site address"></div>
+        </div>
+
+        <div>
+          <table class="proposal-table">
+            <thead>
+              <tr>
+                <th>Sr No.</th>
+                <th>Product Description</th>
+                <th>Warranty</th>
+                <th>Unit Rate</th>
+                <th>Qty</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="proposalRows"></tbody>
+          </table>
+        </div>
+
+        <div class="proposal-total">
+          <div class="line"><span>Subtotal</span><strong id="proposalSubtotal">₹0</strong></div>
+          <div class="line"><span>GST @ 18%</span><strong id="proposalGst">₹0</strong></div>
+          <div class="line grand"><span>Grand Total</span><strong id="proposalTotal">₹0</strong></div>
+        </div>
+
+        <div class="modal-actions no-print">
+          <button class="copy-btn" id="copyProposalBtn">📋 Copy Proposal Text</button>
+          <button class="print-btn" id="printProposalBtn">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const UPS_DATA = [
+      { id: 1, name: 'APC MAKE 2 KVA (SRV 2 KUXI) 72 VDC ONLINE UPS', rate: 34500, warranty: '24 MONTHS' },
+      { id: 2, name: 'NUMERIC MAKE 3 KVA 96 VDC ONLINE UPS', rate: 48200, warranty: '24 MONTHS' },
+      { id: 3, name: 'LUMINOUS MAKE 1 KVA 36 VDC HOME UPS', rate: 18500, warranty: '24 MONTHS' },
+      { id: 4, name: 'EATON MAKE 10 KVA 3PH X 3PH ONLINE UPS 192 VDC', rate: 192000, warranty: '24 MONTHS' },
+      { id: 5, name: 'VERTIV MAKE 20 KVA 3PH X 1PH ONLINE UPS 240 VDC', rate: 285000, warranty: '24 MONTHS' },
+      { id: 6, name: 'BPE MAKE 6 KVA 1PH ONLINE UPS 120 VDC', rate: 68500, warranty: '24 MONTHS' },
+      { id: 7, name: 'MICROTEK MAKE 1.5 KVA 48 VDC ONLINE UPS', rate: 22500, warranty: '24 MONTHS' },
+      { id: 8, name: 'FUJI MAKE 30 KVA 3PH X 3PH ONLINE UPS 384 VDC', rate: 425000, warranty: '36 MONTHS' },
+      { id: 9, name: 'HITACHI MAKE 40 KVA 3PH X 3PH ONLINE UPS 384 VDC', rate: 515000, warranty: '36 MONTHS' },
+      { id: 10, name: 'POM POWER MAKE 100 KVA 3PH ONLINE UPS 480 VDC', rate: 1185000, warranty: '36 MONTHS' },
+      { id: 11, name: 'AVO MAKE 11 KVA 3PH X 1PH ONLINE UPS 192 VDC', rate: 158000, warranty: '24 MONTHS' },
+      { id: 12, name: 'APC MAKE 200 KVA 3PH X 3PH ONLINE UPS 600 VDC', rate: 2450000, warranty: '36 MONTHS' }
+    ];
+
+    const BATTERY_DATA = [
+      { id: 101, name: 'EXIDE MAKE 12 V 42 AH SMF BATTERY', rate: 3450, warranty: '24 MONTHS' },
+      { id: 102, name: 'EXIDE MAKE 12 V 65 AH SMF BATTERY', rate: 5050, warranty: '24 MONTHS' },
+      { id: 103, name: 'AUTOBAT MAKE 12 V 100 AH TUBULAR BATTERY', rate: 8450, warranty: '30 MONTHS' },
+      { id: 104, name: 'AUTOBAT MAKE 12 V 150 AH TUBULAR BATTERY', rate: 10850, warranty: '36 MONTHS' },
+      { id: 105, name: 'LUMINOUS MAKE 12 V 100 AH TUBULAR BATTERY', rate: 7900, warranty: '30 MONTHS' },
+      { id: 106, name: 'QUANTA MAKE 12 V 26 AH SMF BATTERY', rate: 2450, warranty: '18 MONTHS' },
+      { id: 107, name: 'ROCKET MAKE 12 V 18 AH SMF BATTERY', rate: 1750, warranty: '18 MONTHS' },
+      { id: 108, name: 'APC MAKE 12 V 42 AH SMF BATTERY', rate: 3600, warranty: '24 MONTHS' },
+      { id: 109, name: 'LITHIUM BATTERY PACK 48 V 100 AH FOR UPS', rate: 98000, warranty: '36 MONTHS' },
+      { id: 110, name: 'LITHIUM BATTERY PACK 72 V 65 AH MODULAR SYSTEM', rate: 134000, warranty: '36 MONTHS' },
+      { id: 111, name: 'EXIDE MAKE 12 V 120 AH TUBULAR BATTERY', rate: 12900, warranty: '36 MONTHS' },
+      { id: 112, name: 'OTHER BATTERY KIT 48 V 26 AH FOR SMALL UPS', rate: 5900, warranty: '12 MONTHS' }
+    ];
+
+    const ACCESSORY_DATA = [
+      { id: 201, name: 'ATS (AUTO TRANSFER SWITCH) AP 4423 A - 16 AMP', rate: 52000, warranty: '12 MONTHS' },
+      { id: 202, name: 'ATS PANEL 63 AMP FOR UPS BYPASS', rate: 69000, warranty: '12 MONTHS' },
+      { id: 203, name: 'BATTERY CHARGER 12V 20A', rate: 4200, warranty: '12 MONTHS' },
+      { id: 204, name: 'DC BREAKER 32 AMP FOR UPS', rate: 0, warranty: '0 MONTHS' },
+      { id: 205, name: 'RACK MOUNT KIT FOR UPS', rate: 9800, warranty: '12 MONTHS' },
+      { id: 206, name: 'SNMP CARD FOR REMOTE MONITORING', rate: 16500, warranty: '12 MONTHS' },
+      { id: 207, name: 'TRANSFORMER 10 KVA ISOLATION UNIT', rate: 88000, warranty: '24 MONTHS' },
+      { id: 208, name: 'UPS COMMISSIONING AND INSTALLATION', rate: 15000, warranty: 'SERVICE' },
+      { id: 209, name: 'HEALTH CHECK SERVICE FOR UPS', rate: 7500, warranty: 'SERVICE' },
+      { id: 210, name: 'TRANSPORTATION AND HANDLING', rate: 3000, warranty: 'SERVICE' },
+      { id: 211, name: 'PARALLEL KIT FOR UPS', rate: 0, warranty: '12 MONTHS' },
+      { id: 212, name: 'RAIL KIT FOR 19 INCH RACK', rate: 6800, warranty: '12 MONTHS' }
+    ];
+
+    const state = {
+      cart: [],
+      ups: { brand: 'ALL', capacity: 'ALL', phase: 'ALL', vdc: 'ALL' },
+      battery: { type: 'ALL', brand: 'ALL', ah: 'ALL' },
+      accessoryCategory: 'ALL',
+      proposalOpen: false
+    };
+
+    const brandOrder = ['APC', 'AVO', 'BPE', 'EATON', 'FUJI', 'HITACHI', 'LUMINOUS', 'MICROTEK', 'NUMERIC', 'POM POWER', 'VERTIV'];
+    const batteryBrandOrder = ['APC', 'AUTOBAT', 'EXIDE', 'LUMINOUS', 'QUANTA', 'ROCKET', 'OTHER'];
+    const batteryTypeOrder = ['SMF', 'TUBULAR', 'LITHIUM', 'OTHER'];
+    const accessoryCategories = ['ALL', 'ATS', 'CHARGER', 'DC BREAKER', 'OTHER', 'RACK', 'SERVICE', 'SNMP CARD', 'TRANSFORMER'];
+
+    function formatMoney(value) {
+      return '₹' + Math.round(value).toLocaleString('en-IN');
+    }
+
+    function extractBrand(name) {
+      const upper = name.toUpperCase();
+      if (upper.startsWith('POM POWER')) return 'POM POWER';
+      return brandOrder.find((brand) => upper.startsWith(brand)) || 'OTHER';
+    }
+
+    function extractKVA(name) {
+      const match = name.match(/(\d+\.?\d*)\s*KVA/i);
+      return match ? match[1] + ' KVA' : null;
+    }
+
+    function extractVDC(name) {
+      const match = name.match(/(\d+(?:-\d+)?)\s*VDC/i);
+      return match ? match[1] + ' VDC' : null;
+    }
+
+    function extractPhase(name) {
+      if (/3PH/i.test(name)) return '3PH';
+      if (/1PH|LINE INTERACTIVE|HOME UPS/i.test(name)) return '1PH';
+      return '1PH';
+    }
+
+    function extractBatteryType(name) {
+      if (/LITHIUM/i.test(name)) return 'LITHIUM';
+      if (/TUBULAR/i.test(name)) return 'TUBULAR';
+      if (/SMF/i.test(name)) return 'SMF';
+      return 'OTHER';
+    }
+
+    function extractAH(name) {
+      const match = name.match(/(\d+)\s*AH/i);
+      return match ? match[1] + ' AH' : null;
+    }
+
+    function extractVoltage(name) {
+      const match = name.match(/(\d+)\s*V/i);
+      return match ? match[1] + 'V' : null;
+    }
+
+    function extractAccessorySubCategory(name) {
+      const upper = name.toUpperCase();
+      if (upper.includes('ATS') || upper.includes('AUTO TRANSFER')) return 'ATS';
+      if (upper.includes('CHARGER') || upper.includes('CHARGES')) return 'CHARGER';
+      if (upper.includes('BREAKER')) return 'DC BREAKER';
+      if (upper.includes('RACK') || upper.includes('RAIL KIT')) return 'RACK';
+      if (upper.includes('SNMP')) return 'SNMP CARD';
+      if (upper.includes('TRANSFORMER') || upper.includes('TRANSFROMER')) return 'TRANSFORMER';
+      if (upper.includes('COMMISSION') || upper.includes('HEALTH CHECK') || upper.includes('INSTALLATION') || upper.includes('TRANSPORTATION')) return 'SERVICE';
+      return 'OTHER';
+    }
+
+    function enrichUPS(products) {
+      return products.map((item) => ({
+        ...item,
+        brand: extractBrand(item.name),
+        kva: extractKVA(item.name),
+        phase: extractPhase(item.name),
+        vdc: extractVDC(item.name),
+        category: 'ups'
+      }));
+    }
+
+    function enrichBattery(products) {
+      return products.map((item) => ({
+        ...item,
+        type: extractBatteryType(item.name),
+        brand: item.name.toUpperCase().startsWith('OTHER') ? 'OTHER' : (item.name.toUpperCase().startsWith('AUTOBAT') ? 'AUTOBAT' : extractBrand(item.name)),
+        ah: extractAH(item.name),
+        voltage: extractVoltage(item.name),
+        category: 'battery'
+      }));
+    }
+
+    function enrichAccessories(products) {
+      return products.map((item) => ({
+        ...item,
+        subCategory: extractAccessorySubCategory(item.name),
+        category: 'accessory'
+      }));
+    }
+
+    const UPS = enrichUPS(UPS_DATA);
+    const BATTERIES = enrichBattery(BATTERY_DATA);
+    const ACCESSORIES = enrichAccessories(ACCESSORY_DATA);
+
+    const els = {
+      headerTotal: document.getElementById('headerTotal'),
+      headerCount: document.getElementById('headerCount'),
+      quoteChip: document.getElementById('quoteChip'),
+      upsBrand: document.getElementById('upsBrand'),
+      upsCapacity: document.getElementById('upsCapacity'),
+      upsPhase: document.getElementById('upsPhase'),
+      upsVdc: document.getElementById('upsVdc'),
+      upsList: document.getElementById('upsList'),
+      upsCount: document.getElementById('upsCount'),
+      upsResultsPill: document.getElementById('upsResultsPill'),
+      batteryType: document.getElementById('batteryType'),
+      batteryBrand: document.getElementById('batteryBrand'),
+      batteryAh: document.getElementById('batteryAh'),
+      batteryList: document.getElementById('batteryList'),
+      batteryCount: document.getElementById('batteryCount'),
+      batteryResultsPill: document.getElementById('batteryResultsPill'),
+      categoryTabs: document.getElementById('categoryTabs'),
+      accessoryGrid: document.getElementById('accessoryGrid'),
+      accessoryCount: document.getElementById('accessoryCount'),
+      accessoryResultsPill: document.getElementById('accessoryResultsPill'),
+      sidebarContent: document.getElementById('sidebarContent'),
+      itemsBadge: document.getElementById('itemsBadge'),
+      subtotalText: document.getElementById('subtotalText'),
+      gstText: document.getElementById('gstText'),
+      totalText: document.getElementById('totalText'),
+      finalizeBtn: document.getElementById('finalizeBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      proposalModal: document.getElementById('proposalModal'),
+      proposalRows: document.getElementById('proposalRows'),
+      proposalSubtotal: document.getElementById('proposalSubtotal'),
+      proposalGst: document.getElementById('proposalGst'),
+      proposalTotal: document.getElementById('proposalTotal'),
+      closeModalBtn: document.getElementById('closeModalBtn'),
+      printProposalBtn: document.getElementById('printProposalBtn'),
+      copyProposalBtn: document.getElementById('copyProposalBtn'),
+      customerName: document.getElementById('customerName'),
+      companyName: document.getElementById('companyName'),
+      contactNumber: document.getElementById('contactNumber'),
+      siteAddress: document.getElementById('siteAddress'),
+      printDateLine: document.getElementById('printDateLine'),
+      printCustomerName: document.getElementById('printCustomerName'),
+      printCompanyName: document.getElementById('printCompanyName'),
+      printContactNumber: document.getElementById('printContactNumber'),
+      printSiteAddress: document.getElementById('printSiteAddress')
+    };
+
+    function uniqSorted(items, key) {
+      return [...new Set(items.map((item) => item[key]).filter(Boolean))].sort((a, b) => {
+        const aNum = Number(a);
+        const bNum = Number(b);
+        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
+        return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
+      });
+    }
+
+    function setSelectOptions(select, placeholder, options, currentValue, disabled = false) {
+      select.innerHTML = '';
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = 'ALL';
+      placeholderOption.textContent = placeholder;
+      select.appendChild(placeholderOption);
+      options.forEach((option) => {
+        const el = document.createElement('option');
+        el.value = option;
+        el.textContent = option;
+        select.appendChild(el);
+      });
+      select.value = options.includes(currentValue) ? currentValue : 'ALL';
+      select.disabled = disabled;
+    }
+
+    function shimmerThen(callback) {
+      [els.upsCapacity, els.upsPhase, els.upsVdc, els.batteryBrand, els.batteryAh].forEach((select) => select.classList.add('loading-shimmer'));
+      window.setTimeout(() => {
+        callback();
+        [els.upsCapacity, els.upsPhase, els.upsVdc, els.batteryBrand, els.batteryAh].forEach((select) => select.classList.remove('loading-shimmer'));
+      }, 100);
+    }
+
+    function getFilteredUpsBase() {
+      return UPS.filter((item) => state.ups.brand === 'ALL' || item.brand === state.ups.brand);
+    }
+
+    function getFilteredUpsCapacity() {
+      const base = getFilteredUpsBase();
+      return base.filter((item) => state.ups.capacity === 'ALL' || item.kva === state.ups.capacity);
+    }
+
+    function getFilteredUpsPhase() {
+      const base = getFilteredUpsCapacity();
+      return base.filter((item) => state.ups.phase === 'ALL' || item.phase === state.ups.phase);
+    }
+
+    function getFilteredUpsFinal() {
+      const base = getFilteredUpsPhase();
+      return base.filter((item) => state.ups.vdc === 'ALL' || item.vdc === state.ups.vdc);
+    }
+
+    function getFilteredBatteryBase() {
+      return BATTERIES.filter((item) => state.battery.type === 'ALL' || item.type === state.battery.type);
+    }
+
+    function getFilteredBatteryBrand() {
+      const base = getFilteredBatteryBase();
+      return base.filter((item) => state.battery.brand === 'ALL' || item.brand === state.battery.brand);
+    }
+
+    function getFilteredBatteryFinal() {
+      const base = getFilteredBatteryBrand();
+      return base.filter((item) => state.battery.ah === 'ALL' || item.ah === state.battery.ah);
+    }
+
+    function getFilteredAccessories() {
+      return ACCESSORIES.filter((item) => state.accessoryCategory === 'ALL' || item.subCategory === state.accessoryCategory);
+    }
+
+    function renderUpsFilters() {
+      const base = getFilteredUpsBase();
+      const capacities = uniqSorted(base, 'kva');
+      const capacityFiltered = base.filter((item) => state.ups.capacity === 'ALL' || item.kva === state.ups.capacity);
+      const phases = uniqSorted(capacityFiltered, 'phase');
+      const phaseFiltered = capacityFiltered.filter((item) => state.ups.phase === 'ALL' || item.phase === state.ups.phase);
+      const vdcs = uniqSorted(phaseFiltered, 'vdc');
+
+      setSelectOptions(els.upsBrand, 'All Brands', brandOrder.filter((brand) => UPS.some((item) => item.brand === brand)), state.ups.brand);
+      setSelectOptions(els.upsCapacity, 'kVA', capacities, state.ups.capacity);
+      setSelectOptions(els.upsPhase, 'Phase', phases, state.ups.phase);
+      setSelectOptions(els.upsVdc, 'VDC', vdcs, state.ups.vdc);
+
+      els.upsResultsPill.textContent = `MAIN UNIT · ${getFilteredUpsFinal().length} results`;
+      els.upsCount.textContent = `${getFilteredUpsFinal().length} items`;
+    }
+
+    function renderBatteryFilters() {
+      const typeOptions = batteryTypeOrder.filter((type) => BATTERIES.some((item) => item.type === type));
+      const brandBase = getFilteredBatteryBase();
+      const brandOptions = batteryBrandOrder.filter((brand) => {
+        if (brand === 'OTHER') return brandBase.some((item) => item.brand === 'OTHER');
+        return brandBase.some((item) => item.brand === brand);
+      });
+      const brandFiltered = brandBase.filter((item) => state.battery.brand === 'ALL' || item.brand === state.battery.brand);
+      const ahOptions = uniqSorted(brandFiltered, 'ah');
+
+      setSelectOptions(els.batteryType, 'Type', typeOptions, state.battery.type);
+      setSelectOptions(els.batteryBrand, 'Brand', brandOptions, state.battery.brand);
+      setSelectOptions(els.batteryAh, 'AH', ahOptions, state.battery.ah);
+
+      els.batteryResultsPill.textContent = `POWER STORAGE · ${getFilteredBatteryFinal().length} results`;
+      els.batteryCount.textContent = `${getFilteredBatteryFinal().length} items`;
+    }
+
+    function renderAccessoryTabs() {
+      els.categoryTabs.innerHTML = '';
+      accessoryCategories.forEach((category) => {
+        const button = document.createElement('button');
+        button.className = 'tab' + (state.accessoryCategory === category ? ' active' : '');
+        button.textContent = category === 'ALL' ? 'All Items' : category;
+        button.addEventListener('click', () => {
+          state.accessoryCategory = category;
+          renderAccessories();
+        });
+        els.categoryTabs.appendChild(button);
+      });
+    }
+
+    function renderUpsList() {
+      const items = getFilteredUpsFinal();
+      els.upsList.innerHTML = '';
+      if (!items.length) {
+        els.upsList.innerHTML = '<div class="empty-state"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path></svg><h3>No matching UPS found for this configuration</h3><p>Try widening your filters to reveal more valid UPS combinations.</p></div>';
+        return;
+      }
+      items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'product-row';
+        row.innerHTML = `
+          <div class="product-main">
+            <div class="product-name">${item.name}</div>
+            <div class="product-meta"><strong>${item.rate ? formatMoney(item.rate) : 'Price on request'}</strong><span>|</span><span>${item.warranty || '-'}</span></div>
+          </div>
+          <button class="add-btn ups" aria-label="Add ${item.name}">+</button>
+        `;
+        const addBtn = row.querySelector('button');
+        addBtn.addEventListener('click', () => addToCart(item, addBtn));
+        els.upsList.appendChild(row);
+      });
+    }
+
+    function renderBatteryList() {
+      const items = getFilteredBatteryFinal();
+      els.batteryList.innerHTML = '';
+      if (!items.length) {
+        els.batteryList.innerHTML = '<div class="empty-state"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"></rect><path d="M10 2h4"></path></svg><h3>No matching batteries found for this configuration</h3><p>Change the type, brand, or AH rating to browse alternatives.</p></div>';
+        return;
+      }
+      items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'product-row';
+        row.innerHTML = `
+          <div class="product-main">
+            <div class="product-name">${item.name}</div>
+            <div class="product-meta"><strong>${item.rate ? formatMoney(item.rate) : 'Price on request'}</strong><span>|</span><span>${item.warranty || '-'}</span></div>
+          </div>
+          <button class="add-btn battery" aria-label="Add ${item.name}">+</button>
+        `;
+        const addBtn = row.querySelector('button');
+        addBtn.addEventListener('click', () => addToCart(item, addBtn));
+        els.batteryList.appendChild(row);
+      });
+    }
+
+    function renderAccessories() {
+      renderAccessoryTabs();
+      const items = getFilteredAccessories();
+      els.accessoryGrid.innerHTML = '';
+      els.accessoryResultsPill.textContent = `OPTIONAL · ${items.length} results`;
+      els.accessoryCount.textContent = `${items.length} items`;
+      if (!items.length) {
+        els.accessoryGrid.innerHTML = '<div class="empty-state" style="grid-column:1 / -1;"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.7 4.2L18 20l-6-4-6 4 1.7-6.8L2 9h7z"></path></svg><h3>No matching accessories found</h3><p>Choose a different category or return to All Items.</p></div>';
+        return;
+      }
+      items.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'accessory-card';
+        card.innerHTML = `
+          <span class="accessory-badge">${item.subCategory}</span>
+          <button class="add-btn accessory corner" aria-label="Add ${item.name}">+</button>
+          <div class="accessory-name">${item.name}</div>
+          <div class="accessory-footer">
+            <strong>${item.rate ? formatMoney(item.rate) : 'Price on request'}</strong>
+            <span>${item.warranty || '-'}</span>
+          </div>
+        `;
+        const addBtn = card.querySelector('button');
+        addBtn.addEventListener('click', () => addToCart(item, addBtn));
+        els.accessoryGrid.appendChild(card);
+      });
+    }
+
+    function getSubtotal() {
+      return state.cart.reduce((sum, item) => sum + (item.rate || 0), 0);
+    }
+
+    function getGST() {
+      return Math.round(getSubtotal() * 0.18);
+    }
+
+    function getTotal() {
+      return getSubtotal() + getGST();
+    }
+
+    function getItemCount() {
+      return state.cart.length;
+    }
+
+    function updateHeader() {
+      els.headerTotal.textContent = formatMoney(getTotal());
+      els.headerCount.textContent = String(getItemCount());
+      els.itemsBadge.textContent = `${getItemCount()} items`;
+      els.subtotalText.textContent = formatMoney(getSubtotal());
+      els.gstText.textContent = formatMoney(getGST());
+      els.totalText.textContent = formatMoney(getTotal());
+    }
+
+    function renderSidebar() {
+      els.sidebarContent.innerHTML = '';
+      if (!state.cart.length) {
+        els.sidebarContent.innerHTML = `
+          <div class="empty-state">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <path d="M3.3 7L12 12l8.7-5"></path>
+              <path d="M12 22V12"></path>
+            </svg>
+            <h3>Your quote is empty</h3>
+            <p>Start selecting components from the left to build your configuration.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const list = document.createElement('div');
+      list.className = 'cart-list';
+      state.cart.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'cart-card slide-in';
+        card.dataset.cartId = item.cartId;
+        const iconClass = item.category === 'ups' ? 'ups' : item.category === 'battery' ? 'battery' : 'accessory';
+        const iconSvg = item.category === 'ups'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h4"></path></svg>'
+          : item.category === 'battery'
+            ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"></rect><path d="M10 2h4"></path></svg>'
+            : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 0 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1A1.7 1.7 0 0 0 10 3.1V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 0 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1A1.7 1.7 0 0 0 21 10h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1z"></path></svg>';
+        card.innerHTML = `
+          <div class="cart-icon-box ${iconClass}">${iconSvg}</div>
+          <div>
+            <div class="cart-label">${item.category.toUpperCase()}</div>
+            <div class="cart-name">${item.name}</div>
+            <div class="cart-warranty">${item.warranty || '-'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="cart-price">${formatMoney(item.rate || 0)}</div>
+            <button class="remove-btn" aria-label="Remove item">×</button>
+          </div>
+        `;
+        card.querySelector('.remove-btn').addEventListener('click', () => removeFromCart(item.cartId, card));
+        list.appendChild(card);
+      });
+      els.sidebarContent.appendChild(list);
+    }
+
+    function addToCart(item, button) {
+      if (button) {
+        button.classList.remove('pulse');
+        void button.offsetWidth;
+        button.classList.add('pulse');
+      }
+      state.cart.push({
+        cartId: Date.now() + Math.random(),
+        productId: item.id,
+        name: item.name,
+        rate: item.rate,
+        warranty: item.warranty,
+        category: item.category,
+        qty: 1
+      });
+      renderSidebar();
+      updateHeader();
+      const quoteChip = els.quoteChip;
+      quoteChip.classList.remove('flash-total');
+      void quoteChip.offsetWidth;
+      quoteChip.classList.add('flash-total');
+      els.headerCount.classList.remove('header-pop');
+      void els.headerCount.offsetWidth;
+      els.headerCount.classList.add('header-pop');
+    }
+
+    function removeFromCart(cartId, card) {
+      if (card) {
+        card.classList.add('remove');
+        window.setTimeout(() => {
+          state.cart = state.cart.filter((item) => item.cartId !== cartId);
+          renderSidebar();
+          updateHeader();
+          if (state.cart.length === 0) {
+            renderSidebar();
+          }
+        }, 160);
+        return;
+      }
+      state.cart = state.cart.filter((item) => item.cartId !== cartId);
+      renderSidebar();
+      updateHeader();
+    }
+
+    function resetCart() {
+      if (!window.confirm('Clear the entire configuration?')) return;
+      state.cart = [];
+      renderSidebar();
+      updateHeader();
+    }
+
+    function buildProposalRows() {
+      els.proposalRows.innerHTML = '';
+      state.cart.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.name}</td>
+          <td>${item.warranty || '-'}</td>
+          <td>${formatMoney(item.rate || 0)}</td>
+          <td>1</td>
+          <td>${formatMoney(item.rate || 0)}</td>
+        `;
+        els.proposalRows.appendChild(tr);
+      });
+      els.proposalSubtotal.textContent = formatMoney(getSubtotal());
+      els.proposalGst.textContent = formatMoney(getGST());
+      els.proposalTotal.textContent = formatMoney(getTotal());
+      els.printDateLine.textContent = 'Date: ' + new Date().toLocaleDateString('en-IN');
+      els.printCustomerName.textContent = els.customerName.value || '-';
+      els.printCompanyName.textContent = els.companyName.value || '-';
+      els.printContactNumber.textContent = els.contactNumber.value || '-';
+      els.printSiteAddress.textContent = els.siteAddress.value || '-';
+    }
+
+    function getProposalText() {
+      const lines = [];
+      lines.push('AUTOMATE FLOW AI');
+      lines.push('Parametric UPS & Battery Configurator');
+      lines.push('Date: ' + new Date().toLocaleDateString('en-IN'));
+      lines.push('Customer: ' + (els.customerName.value || '-'));
+      lines.push('Company: ' + (els.companyName.value || '-'));
+      lines.push('Contact: ' + (els.contactNumber.value || '-'));
+      lines.push('Address: ' + (els.siteAddress.value || '-'));
+      lines.push('------------------------------------------------');
+      lines.push('QUOTATION SUMMARY');
+      lines.push('------------------------------------------------');
+      lines.push('Sr | Description | Warranty | Rate | Total');
+      state.cart.forEach((item, index) => {
+        const value = formatMoney(item.rate || 0);
+        lines.push(`${index + 1} | ${item.name} | ${item.warranty || '-'} | ${value} | ${value}`);
+      });
+      lines.push('------------------------------------------------');
+      lines.push('Subtotal (excl. GST): ' + formatMoney(getSubtotal()));
+      lines.push('GST @ 18%: ' + formatMoney(getGST()));
+      lines.push('GRAND TOTAL (incl. GST): ' + formatMoney(getTotal()));
+      lines.push('------------------------------------------------');
+      lines.push('Note: All prices are subject to confirmation.');
+      lines.push('Warranty as per manufacturer terms.');
+      return lines.join('\n');
+    }
+
+    function openModal() {
+      if (!state.cart.length) {
+        window.alert('Add at least one item before finalizing the proposal.');
+        return;
+      }
+      state.proposalOpen = true;
+      buildProposalRows();
+      els.proposalModal.classList.add('open');
+      els.proposalModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      state.proposalOpen = false;
+      els.proposalModal.classList.remove('open');
+      els.proposalModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function printProposal() {
+      buildProposalRows();
+      window.print();
+    }
+
+    async function copyProposal() {
+      try {
+        await navigator.clipboard.writeText(getProposalText());
+        els.copyProposalBtn.textContent = 'Copied';
+        window.setTimeout(() => {
+          els.copyProposalBtn.textContent = '📋 Copy Proposal Text';
+        }, 1200);
+      } catch (error) {
+        window.alert('Clipboard access was blocked by the browser.');
+      }
+    }
+
+    function handleUpsChange() {
+      shimmerThen(() => {
+        state.ups.brand = els.upsBrand.value;
+        state.ups.capacity = 'ALL';
+        state.ups.phase = 'ALL';
+        state.ups.vdc = 'ALL';
+        if (state.ups.brand !== 'ALL') {
+          const base = getFilteredUpsBase();
+          const capacities = uniqSorted(base, 'kva');
+          setSelectOptions(els.upsCapacity, 'kVA', capacities, 'ALL');
+        }
+        renderUpsFilters();
+        renderUpsList();
+      });
+    }
+
+    function handleUpsCapacityChange() {
+      shimmerThen(() => {
+        state.ups.capacity = els.upsCapacity.value;
+        state.ups.phase = 'ALL';
+        state.ups.vdc = 'ALL';
+        renderUpsFilters();
+        renderUpsList();
+      });
+    }
+
+    function handleUpsPhaseChange() {
+      shimmerThen(() => {
+        state.ups.phase = els.upsPhase.value;
+        state.ups.vdc = 'ALL';
+        renderUpsFilters();
+        renderUpsList();
+      });
+    }
+
+    function handleUpsVdcChange() {
+      state.ups.vdc = els.upsVdc.value;
+      renderUpsFilters();
+      renderUpsList();
+    }
+
+    function handleBatteryTypeChange() {
+      shimmerThen(() => {
+        state.battery.type = els.batteryType.value;
+        state.battery.brand = 'ALL';
+        state.battery.ah = 'ALL';
+        renderBatteryFilters();
+        renderBatteryList();
+      });
+    }
+
+    function handleBatteryBrandChange() {
+      shimmerThen(() => {
+        state.battery.brand = els.batteryBrand.value;
+        state.battery.ah = 'ALL';
+        renderBatteryFilters();
+        renderBatteryList();
+      });
+    }
+
+    function handleBatteryAhChange() {
+      state.battery.ah = els.batteryAh.value;
+      renderBatteryFilters();
+      renderBatteryList();
+    }
+
+    function bootstrap() {
+      setSelectOptions(els.upsBrand, 'All Brands', brandOrder.filter((brand) => UPS.some((item) => item.brand === brand)), 'ALL');
+      setSelectOptions(els.upsCapacity, 'kVA', uniqSorted(UPS, 'kva'), 'ALL');
+      setSelectOptions(els.upsPhase, 'Phase', uniqSorted(UPS, 'phase'), 'ALL');
+      setSelectOptions(els.upsVdc, 'VDC', uniqSorted(UPS, 'vdc'), 'ALL');
+
+      setSelectOptions(els.batteryType, 'Type', batteryTypeOrder.filter((type) => BATTERIES.some((item) => item.type === type)), 'ALL');
+      setSelectOptions(els.batteryBrand, 'Brand', batteryBrandOrder.filter((brand) => brand === 'OTHER' || BATTERIES.some((item) => item.brand === brand)), 'ALL');
+      setSelectOptions(els.batteryAh, 'AH', uniqSorted(BATTERIES, 'ah'), 'ALL');
+
+      els.upsBrand.addEventListener('change', handleUpsChange);
+      els.upsCapacity.addEventListener('change', handleUpsCapacityChange);
+      els.upsPhase.addEventListener('change', handleUpsPhaseChange);
+      els.upsVdc.addEventListener('change', handleUpsVdcChange);
+      els.batteryType.addEventListener('change', handleBatteryTypeChange);
+      els.batteryBrand.addEventListener('change', handleBatteryBrandChange);
+      els.batteryAh.addEventListener('change', handleBatteryAhChange);
+      els.finalizeBtn.addEventListener('click', openModal);
+      els.closeModalBtn.addEventListener('click', closeModal);
+      els.resetBtn.addEventListener('click', resetCart);
+      els.copyProposalBtn.addEventListener('click', copyProposal);
+      els.printProposalBtn.addEventListener('click', printProposal);
+      els.proposalModal.addEventListener('click', (event) => {
+        if (event.target === els.proposalModal) closeModal();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && state.proposalOpen) closeModal();
+      });
+      renderUpsFilters();
+      renderBatteryFilters();
+      renderUpsList();
+      renderBatteryList();
+      renderAccessories();
+      renderSidebar();
+      updateHeader();
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>
