@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Automate Flow Ai | Parametric UPS & Battery Calculator</title>
+  <title>Automate Flow AI | Parametric UPS & Battery Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -66,15 +66,22 @@
     }
 
     .brand-icon {
-      width: 48px;
-      height: 48px;
+      width: min(260px, 46vw);
+      height: 58px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      display: grid;
-      place-items: center;
-      color: #fff;
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+      background: #050816;
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
       flex: 0 0 auto;
+    }
+
+    .brand-icon img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .brand-copy { min-width: 0; }
@@ -843,6 +850,10 @@
       display: none;
     }
 
+    .proposal-logo-print {
+      display: none;
+    }
+
     .proposal-customer-print {
       display: none;
     }
@@ -960,6 +971,23 @@
         margin-bottom: 12px;
       }
 
+      .proposal-logo-print {
+        display: flex !important;
+        align-items: center;
+        width: 220px;
+        height: 58px;
+        border-radius: 10px;
+        background: #050816 !important;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+      }
+
+      .proposal-logo-print img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
       .proposal-header-print h1 {
         margin: 0;
         font-size: 22px;
@@ -1055,20 +1083,10 @@
   <div class="app-shell">
     <header class="header">
       <div class="brand-wrap">
-        <div class="brand-icon" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
-            <rect x="7" y="6" width="10" height="3" rx="1"></rect>
-            <circle cx="8" cy="13" r="1"></circle>
-            <circle cx="12" cy="13" r="1"></circle>
-            <circle cx="16" cy="13" r="1"></circle>
-            <circle cx="8" cy="17" r="1"></circle>
-            <circle cx="12" cy="17" r="1"></circle>
-            <circle cx="16" cy="17" r="1"></circle>
-          </svg>
+        <div class="brand-icon">
+          <img src="../assets/automate-flow-ai-logo.png" alt="Automate Flow AI" />
         </div>
         <div class="brand-copy">
-          <h1>Automate Flow Ai</h1>
           <p>Parametric UPS & Battery Calculator</p>
         </div>
       </div>
@@ -1207,7 +1225,9 @@
     <div class="modal-card">
       <div class="modal-print-content" id="proposalPrintArea">
         <div class="proposal-header-print">
-          <h1>Automate Flow Ai</h1>
+          <div class="proposal-logo-print">
+            <img src="../assets/automate-flow-ai-logo.png" alt="Automate Flow AI" />
+          </div>
           <p>Parametric UPS & Battery Configurator</p>
           <p id="printDateLine"></p>
         </div>
