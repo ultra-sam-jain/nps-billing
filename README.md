@@ -9,7 +9,7 @@ nps-portal/
 ├── index.html              ← shared portal home page
 ├── server.py               ← local dev server (Python 3, no deps)
 ├── README.md
-└── apps/
+└── tools/
     └── nps-calculator.html ← UPS & Battery Calculator
     └── (add new apps here)
 ```
@@ -24,8 +24,8 @@ Then open http://localhost:8000
 
 ## Add a new app
 
-1. Drop the `.html` file into `apps/`  e.g. `apps/nps-invoicing.html`
-2. Add a new card in `index.html` pointing to `apps/nps-invoicing.html`
+1. Drop the `.html` file into `tools/`  e.g. `tools/nps-invoicing.html`
+2. Add a new card in `index.html` pointing to `tools/nps-invoicing.html`
 3. Change `status-soon` → `status-live` when ready
 
 ## URL pattern
@@ -33,5 +33,5 @@ Then open http://localhost:8000
 | Page | URL |
 |------|-----|
 | Portal home | `/` |
-| Calculator | `/apps/nps-calculator.html` |
-| Next app | `/apps/nps-<name>.html` |
+| Calculator | `/tools/nps-calculator.html` |
+| Next app | `/tools/nps-<name>.html` |

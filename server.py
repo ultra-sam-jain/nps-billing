@@ -23,7 +23,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 print(f"NPS Portal running → http://localhost:{PORT}")
 print(f"  Home     : http://localhost:{PORT}/")
-print(f"  Calculator: http://localhost:{PORT}/apps/nps-calculator.html")
+print(f"  Calculator: http://localhost:{PORT}/tools/nps-calculator.html")
 print("Press Ctrl+C to stop.\n")
 
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
