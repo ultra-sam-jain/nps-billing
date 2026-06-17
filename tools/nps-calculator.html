@@ -2156,7 +2156,25 @@
       els.proposalModal.setAttribute('aria-hidden', 'true');
     }
 
+    function validateCustomerFields() {
+      const name = els.customerName.value.trim();
+      const company = els.companyName.value.trim();
+      const phone = els.contactNumber.value.trim();
+      const address = els.siteAddress.value.trim();
+      if (!name || !company || !phone || !address) {
+        window.alert('Please fill in all customer details (Name, Company, Contact Number, Site Address) before proceeding.');
+        return false;
+      }
+      const digits = phone.replace(/\D/g, '');
+      if (digits.length < 10) {
+        window.alert('Please enter a valid contact number with at least 10 digits.');
+        return false;
+      }
+      return true;
+    }
+
     function printProposal() {
+      if (!validateCustomerFields()) return;
       buildProposalRows();
       window.print();
     }
@@ -2175,19 +2193,9 @@
     }
 
     function shareOnWhatsApp() {
-      const name = els.customerName.value.trim();
-      const company = els.companyName.value.trim();
+      if (!validateCustomerFields()) return;
       const phone = els.contactNumber.value.trim();
-      const address = els.siteAddress.value.trim();
-      if (!name || !company || !phone || !address) {
-        window.alert('Please fill in all customer details (Name, Company, Contact Number, Site Address) before sharing.');
-        return;
-      }
       const digits = phone.replace(/\D/g, '');
-      if (digits.length < 10) {
-        window.alert('Please enter a valid contact number with at least 10 digits.');
-        return;
-      }
       const countryCode = digits.length === 10 ? '91' : '';
       const fullNumber = countryCode + digits;
       buildProposalRows();
