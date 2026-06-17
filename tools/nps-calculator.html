@@ -163,6 +163,124 @@
       padding: 0 6px;
     }
 
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #9ca3af;
+      flex: 0 0 auto;
+    }
+
+    .sync-status.loading .sync-dot { background: #f59e0b; animation: syncPulse 1s ease-in-out infinite; }
+    .sync-status.live .sync-dot { background: #16a34a; }
+    .sync-status.error .sync-dot { background: var(--danger); }
+    .sync-status.live { color: #15803d; }
+    .sync-status.error { color: #b91c1c; }
+
+    @keyframes syncPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .sync-refresh {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 8px;
+      color: inherit;
+      transition: transform 0.5s ease, background 0.18s ease;
+    }
+
+    .sync-refresh:hover { background: rgba(15, 23, 42, 0.06); }
+    .sync-refresh.spinning { animation: spin 0.7s linear infinite; }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .load-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(244, 246, 249, 0.92);
+      display: grid;
+      place-items: center;
+      z-index: 2000;
+      gap: 14px;
+    }
+
+    .load-overlay.hidden { display: none; }
+
+    .load-spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 4px solid rgba(37, 99, 235, 0.15);
+      border-top-color: var(--blue);
+      animation: spin 0.8s linear infinite;
+    }
+
+    .load-overlay p {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .sheet-error-banner {
+      max-width: 460px;
+      background: #fff;
+      border: 1px solid #fecaca;
+      border-radius: 16px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      display: none;
+      gap: 10px;
+      flex-direction: column;
+    }
+
+    .sheet-error-banner.visible { display: flex; }
+
+    .sheet-error-banner h3 {
+      margin: 0;
+      color: var(--danger);
+      font-size: 15px;
+    }
+
+    .sheet-error-banner p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .sheet-error-banner button {
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 12px;
+      margin-top: 4px;
+    }
+
     .main-layout {
       display: flex;
       gap: 24px;
@@ -654,6 +772,53 @@
       gap: 14px;
     }
 
+    .summary-control {
+      align-items: flex-end;
+    }
+
+    .summary-control .summary-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .summary-control .summary-copy span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .discount-input-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+      padding: 0 10px 0 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .discount-input-wrap input {
+      width: 72px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      padding: 0;
+      text-align: right;
+      outline: none;
+    }
+
+    .discount-input-wrap input::-webkit-outer-spin-button,
+    .discount-input-wrap input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .discount-input-wrap span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .summary-row {
       display: flex;
       align-items: center;
@@ -672,6 +837,10 @@
 
     .summary-row strong { font-size: 14px; }
     .summary-divider { height: 1px; background: rgba(255, 255, 255, 0.12); }
+
+    .summary-row.net-row strong {
+      color: #d1fae5;
+    }
 
     .total-row {
       color: var(--teal);
@@ -845,6 +1014,7 @@
 
     .copy-btn { background: #e0f2fe; color: var(--blue); }
     .print-btn { background: #d1fae5; color: #047857; }
+    .whatsapp-btn { background: #dcfce7; color: #15803d; }
 
     .proposal-header-print {
       display: none;
@@ -1080,6 +1250,16 @@
   </style>
 </head>
 <body>
+  <div class="load-overlay" id="loadOverlay">
+    <div class="load-spinner" id="loadSpinner"></div>
+    <p id="loadMessage">Loading live prices from sheet…</p>
+    <div class="sheet-error-banner" id="sheetErrorBanner">
+      <h3>Couldn't load live prices</h3>
+      <p id="sheetErrorDetail">The price sheet could not be reached. Check your internet connection or try again.</p>
+      <button id="retrySheetBtn">Retry</button>
+    </div>
+  </div>
+
   <div class="app-shell">
     <header class="header">
       <div class="brand-wrap">
@@ -1089,6 +1269,11 @@
         <div class="brand-copy">
           <p>Parametric UPS & Battery Calculator</p>
         </div>
+      </div>
+      <div class="sync-status" id="syncStatus">
+        <span class="sync-dot" id="syncDot"></span>
+        <span id="syncLabel">Loading prices…</span>
+        <button class="sync-refresh" id="syncRefreshBtn" title="Refresh prices from sheet" aria-label="Refresh prices">🔄</button>
       </div>
       <div class="quote-chip" id="quoteChip">
         <div class="quote-copy">
@@ -1196,9 +1381,27 @@
         </section>
 
         <section class="summary-block" id="summaryBlock">
+          <div class="summary-row summary-control">
+            <div class="summary-copy">
+              <small>Discount %</small>
+              <span>Applied before GST</span>
+            </div>
+            <label class="discount-input-wrap" for="discountPercent">
+              <input id="discountPercent" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal">
+              <span>%</span>
+            </label>
+          </div>
           <div class="summary-row">
-            <small>Subtotal</small>
+            <small>Gross Subtotal</small>
             <strong id="subtotalText">₹0</strong>
+          </div>
+          <div class="summary-row net-row">
+            <small>Discount Amount</small>
+            <strong id="discountText">-₹0</strong>
+          </div>
+          <div class="summary-row">
+            <small>Taxable Subtotal</small>
+            <strong id="taxableSubtotalText">₹0</strong>
           </div>
           <div class="summary-row">
             <small>GST (Estimated 18%)</small>
@@ -1242,7 +1445,7 @@
         <div class="modal-head">
           <div>
             <h2>📋 Proposal Summary</h2>
-            <p class="inline-muted" style="margin:6px 0 0;">Review customer details, line items, and totals before generating the final quote.</p>
+            <p class="inline-muted" style="margin:6px 0 0;">Review customer details, line items, discount, and totals before generating the final quote.</p>
           </div>
           <button class="close-modal no-print" id="closeModalBtn" aria-label="Close proposal">×</button>
         </div>
@@ -1271,13 +1474,15 @@
         </div>
 
         <div class="proposal-total">
-          <div class="line"><span>Subtotal</span><strong id="proposalSubtotal">₹0</strong></div>
+          <div class="line"><span>Gross Subtotal</span><strong id="proposalSubtotal">₹0</strong></div>
+          <div class="line"><span>Discount</span><strong id="proposalDiscount">-₹0</strong></div>
+          <div class="line"><span>Taxable Subtotal</span><strong id="proposalTaxableSubtotal">₹0</strong></div>
           <div class="line"><span>GST @ 18%</span><strong id="proposalGst">₹0</strong></div>
           <div class="line grand"><span>Grand Total</span><strong id="proposalTotal">₹0</strong></div>
         </div>
 
         <div class="modal-actions no-print">
-          <button class="copy-btn" id="copyProposalBtn">📋 Copy Proposal Text</button>
+          <button class="whatsapp-btn" id="whatsappProposalBtn">🟢 Share on WhatsApp</button>
           <button class="print-btn" id="printProposalBtn">🖨️ Print / Save PDF</button>
         </div>
       </div>
@@ -1285,56 +1490,102 @@
   </div>
 
   <script>
-    const UPS_DATA = [
-      { id: 1, name: 'APC MAKE 2 KVA (SRV 2 KUXI) 72 VDC ONLINE UPS', rate: 34500, warranty: '24 MONTHS' },
-      { id: 2, name: 'NUMERIC MAKE 3 KVA 96 VDC ONLINE UPS', rate: 48200, warranty: '24 MONTHS' },
-      { id: 3, name: 'LUMINOUS MAKE 1 KVA 36 VDC HOME UPS', rate: 18500, warranty: '24 MONTHS' },
-      { id: 4, name: 'EATON MAKE 10 KVA 3PH X 3PH ONLINE UPS 192 VDC', rate: 192000, warranty: '24 MONTHS' },
-      { id: 5, name: 'VERTIV MAKE 20 KVA 3PH X 1PH ONLINE UPS 240 VDC', rate: 285000, warranty: '24 MONTHS' },
-      { id: 6, name: 'BPE MAKE 6 KVA 1PH ONLINE UPS 120 VDC', rate: 68500, warranty: '24 MONTHS' },
-      { id: 7, name: 'MICROTEK MAKE 1.5 KVA 48 VDC ONLINE UPS', rate: 22500, warranty: '24 MONTHS' },
-      { id: 8, name: 'FUJI MAKE 30 KVA 3PH X 3PH ONLINE UPS 384 VDC', rate: 425000, warranty: '36 MONTHS' },
-      { id: 9, name: 'HITACHI MAKE 40 KVA 3PH X 3PH ONLINE UPS 384 VDC', rate: 515000, warranty: '36 MONTHS' },
-      { id: 10, name: 'POM POWER MAKE 100 KVA 3PH ONLINE UPS 480 VDC', rate: 1185000, warranty: '36 MONTHS' },
-      { id: 11, name: 'AVO MAKE 11 KVA 3PH X 1PH ONLINE UPS 192 VDC', rate: 158000, warranty: '24 MONTHS' },
-      { id: 12, name: 'APC MAKE 200 KVA 3PH X 3PH ONLINE UPS 600 VDC', rate: 2450000, warranty: '36 MONTHS' }
-    ];
+    // ============================================================
+    // LIVE GOOGLE SHEET DATA SOURCE
+    // ------------------------------------------------------------
+    // Admins edit prices/names/warranty directly in the Google Sheet.
+    // The sheet has ONE tab with three product blocks side by side:
+    //   Columns A-C  -> UPS Items   (Name, Rate, Warranty)
+    //   Columns E-G  -> Battery     (Name, Rate, Warranty)
+    //   Columns I-K  -> Accessories (Name, Rate, Warranty)
+    // This URL must point to a CSV export / published CSV of that tab.
+    // To update: just edit the sheet. No code change needed.
+    // ============================================================
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1HL01pmihkxYbsdXpRvyrBjVuHAk0b8-8v_Zg-h7XYe4/export?format=csv&gid=1996031282';
 
-    const BATTERY_DATA = [
-      { id: 101, name: 'EXIDE MAKE 12 V 42 AH SMF BATTERY', rate: 3450, warranty: '24 MONTHS' },
-      { id: 102, name: 'EXIDE MAKE 12 V 65 AH SMF BATTERY', rate: 5050, warranty: '24 MONTHS' },
-      { id: 103, name: 'AUTOBAT MAKE 12 V 100 AH TUBULAR BATTERY', rate: 8450, warranty: '30 MONTHS' },
-      { id: 104, name: 'AUTOBAT MAKE 12 V 150 AH TUBULAR BATTERY', rate: 10850, warranty: '36 MONTHS' },
-      { id: 105, name: 'LUMINOUS MAKE 12 V 100 AH TUBULAR BATTERY', rate: 7900, warranty: '30 MONTHS' },
-      { id: 106, name: 'QUANTA MAKE 12 V 26 AH SMF BATTERY', rate: 2450, warranty: '18 MONTHS' },
-      { id: 107, name: 'ROCKET MAKE 12 V 18 AH SMF BATTERY', rate: 1750, warranty: '18 MONTHS' },
-      { id: 108, name: 'APC MAKE 12 V 42 AH SMF BATTERY', rate: 3600, warranty: '24 MONTHS' },
-      { id: 109, name: 'LITHIUM BATTERY PACK 48 V 100 AH FOR UPS', rate: 98000, warranty: '36 MONTHS' },
-      { id: 110, name: 'LITHIUM BATTERY PACK 72 V 65 AH MODULAR SYSTEM', rate: 134000, warranty: '36 MONTHS' },
-      { id: 111, name: 'EXIDE MAKE 12 V 120 AH TUBULAR BATTERY', rate: 12900, warranty: '36 MONTHS' },
-      { id: 112, name: 'OTHER BATTERY KIT 48 V 26 AH FOR SMALL UPS', rate: 5900, warranty: '12 MONTHS' }
-    ];
+    let UPS_DATA = [];
+    let BATTERY_DATA = [];
+    let ACCESSORY_DATA = [];
 
-    const ACCESSORY_DATA = [
-      { id: 201, name: 'ATS (AUTO TRANSFER SWITCH) AP 4423 A - 16 AMP', rate: 52000, warranty: '12 MONTHS' },
-      { id: 202, name: 'ATS PANEL 63 AMP FOR UPS BYPASS', rate: 69000, warranty: '12 MONTHS' },
-      { id: 203, name: 'BATTERY CHARGER 12V 20A', rate: 4200, warranty: '12 MONTHS' },
-      { id: 204, name: 'DC BREAKER 32 AMP FOR UPS', rate: 0, warranty: '0 MONTHS' },
-      { id: 205, name: 'RACK MOUNT KIT FOR UPS', rate: 9800, warranty: '12 MONTHS' },
-      { id: 206, name: 'SNMP CARD FOR REMOTE MONITORING', rate: 16500, warranty: '12 MONTHS' },
-      { id: 207, name: 'TRANSFORMER 10 KVA ISOLATION UNIT', rate: 88000, warranty: '24 MONTHS' },
-      { id: 208, name: 'UPS COMMISSIONING AND INSTALLATION', rate: 15000, warranty: 'SERVICE' },
-      { id: 209, name: 'HEALTH CHECK SERVICE FOR UPS', rate: 7500, warranty: 'SERVICE' },
-      { id: 210, name: 'TRANSPORTATION AND HANDLING', rate: 3000, warranty: 'SERVICE' },
-      { id: 211, name: 'PARALLEL KIT FOR UPS', rate: 0, warranty: '12 MONTHS' },
-      { id: 212, name: 'RAIL KIT FOR 19 INCH RACK', rate: 6800, warranty: '12 MONTHS' }
-    ];
+    // --- Minimal CSV parser (handles quoted commas, e.g. "12,500") ---
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (inQuotes) {
+          if (char === '"' && next === '"') { field += '"'; i++; }
+          else if (char === '"') { inQuotes = false; }
+          else { field += char; }
+        } else {
+          if (char === '"') inQuotes = true;
+          else if (char === ',') { row.push(field); field = ''; }
+          else if (char === '\r') { /* skip */ }
+          else if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+          else { field += char; }
+        }
+      }
+      if (field.length || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    function cleanRate(raw) {
+      if (raw === undefined || raw === null) return 0;
+      const cleaned = String(raw).replace(/[₹,\s]/g, '').trim();
+      if (cleaned === '' || cleaned.toUpperCase() === 'N/A') return 0;
+      const num = Number(cleaned);
+      return Number.isNaN(num) ? 0 : num;
+    }
+
+    function cleanWarranty(raw) {
+      const value = (raw || '').toString().trim();
+      return value === '' ? 'N/A' : value;
+    }
+
+    // Builds a {name, rate, warranty} list from a 3-column block of the sheet,
+    // skipping the header row and any blank rows (the sheet has many trailing
+    // empty rows below the real data).
+    function extractBlock(rows, nameCol, rateCol, warrantyCol, idPrefix) {
+      const items = [];
+      let nextId = idPrefix;
+      for (let r = 1; r < rows.length; r++) {
+        const name = (rows[r][nameCol] || '').trim();
+        if (!name) continue;
+        items.push({
+          id: nextId++,
+          name: name,
+          rate: cleanRate(rows[r][rateCol]),
+          warranty: cleanWarranty(rows[r][warrantyCol])
+        });
+      }
+      return items;
+    }
+
+    async function fetchSheetData() {
+      const response = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
+      if (!response.ok) throw new Error('Sheet request failed: ' + response.status);
+      const text = await response.text();
+      const rows = parseCSV(text);
+      if (!rows.length) throw new Error('Sheet returned no data');
+
+      UPS_DATA = extractBlock(rows, 0, 1, 2, 1);
+      BATTERY_DATA = extractBlock(rows, 4, 5, 6, 101);
+      ACCESSORY_DATA = extractBlock(rows, 8, 9, 10, 201);
+
+      if (!UPS_DATA.length && !BATTERY_DATA.length && !ACCESSORY_DATA.length) {
+        throw new Error('Sheet data parsed but came back empty — check column layout');
+      }
+    }
 
     const state = {
       cart: [],
       ups: { brand: 'ALL', capacity: 'ALL', phase: 'ALL', vdc: 'ALL' },
       battery: { type: 'ALL', brand: 'ALL', ah: 'ALL' },
       accessoryCategory: 'ALL',
+      discountPercent: 0,
       proposalOpen: false
     };
 
@@ -1428,11 +1679,27 @@
       }));
     }
 
-    const UPS = enrichUPS(UPS_DATA);
-    const BATTERIES = enrichBattery(BATTERY_DATA);
-    const ACCESSORIES = enrichAccessories(ACCESSORY_DATA);
+    let UPS = [];
+    let BATTERIES = [];
+    let ACCESSORIES = [];
+
+    function buildEnrichedCatalogs() {
+      UPS = enrichUPS(UPS_DATA);
+      BATTERIES = enrichBattery(BATTERY_DATA);
+      ACCESSORIES = enrichAccessories(ACCESSORY_DATA);
+    }
 
     const els = {
+      syncStatus: document.getElementById('syncStatus'),
+      syncDot: document.getElementById('syncDot'),
+      syncLabel: document.getElementById('syncLabel'),
+      syncRefreshBtn: document.getElementById('syncRefreshBtn'),
+      loadOverlay: document.getElementById('loadOverlay'),
+      loadSpinner: document.getElementById('loadSpinner'),
+      loadMessage: document.getElementById('loadMessage'),
+      sheetErrorBanner: document.getElementById('sheetErrorBanner'),
+      sheetErrorDetail: document.getElementById('sheetErrorDetail'),
+      retrySheetBtn: document.getElementById('retrySheetBtn'),
       headerTotal: document.getElementById('headerTotal'),
       headerCount: document.getElementById('headerCount'),
       quoteChip: document.getElementById('quoteChip'),
@@ -1455,7 +1722,10 @@
       accessoryResultsPill: document.getElementById('accessoryResultsPill'),
       sidebarContent: document.getElementById('sidebarContent'),
       itemsBadge: document.getElementById('itemsBadge'),
+      discountPercent: document.getElementById('discountPercent'),
       subtotalText: document.getElementById('subtotalText'),
+      discountText: document.getElementById('discountText'),
+      taxableSubtotalText: document.getElementById('taxableSubtotalText'),
       gstText: document.getElementById('gstText'),
       totalText: document.getElementById('totalText'),
       finalizeBtn: document.getElementById('finalizeBtn'),
@@ -1463,11 +1733,13 @@
       proposalModal: document.getElementById('proposalModal'),
       proposalRows: document.getElementById('proposalRows'),
       proposalSubtotal: document.getElementById('proposalSubtotal'),
+      proposalDiscount: document.getElementById('proposalDiscount'),
+      proposalTaxableSubtotal: document.getElementById('proposalTaxableSubtotal'),
       proposalGst: document.getElementById('proposalGst'),
       proposalTotal: document.getElementById('proposalTotal'),
       closeModalBtn: document.getElementById('closeModalBtn'),
       printProposalBtn: document.getElementById('printProposalBtn'),
-      copyProposalBtn: document.getElementById('copyProposalBtn'),
+      whatsappProposalBtn: document.getElementById('whatsappProposalBtn'),
       customerName: document.getElementById('customerName'),
       companyName: document.getElementById('companyName'),
       contactNumber: document.getElementById('contactNumber'),
@@ -1676,12 +1948,26 @@
       return state.cart.reduce((sum, item) => sum + (item.rate || 0), 0);
     }
 
+    function getDiscountPercent() {
+      const percent = Number(state.discountPercent);
+      if (Number.isNaN(percent)) return 0;
+      return Math.min(100, Math.max(0, percent));
+    }
+
+    function getDiscountAmount() {
+      return Math.round(getSubtotal() * (getDiscountPercent() / 100));
+    }
+
+    function getTaxableSubtotal() {
+      return Math.max(0, getSubtotal() - getDiscountAmount());
+    }
+
     function getGST() {
-      return Math.round(getSubtotal() * 0.18);
+      return Math.round(getTaxableSubtotal() * 0.18);
     }
 
     function getTotal() {
-      return getSubtotal() + getGST();
+      return getTaxableSubtotal() + getGST();
     }
 
     function getItemCount() {
@@ -1693,6 +1979,8 @@
       els.headerCount.textContent = String(getItemCount());
       els.itemsBadge.textContent = `${getItemCount()} items`;
       els.subtotalText.textContent = formatMoney(getSubtotal());
+      els.discountText.textContent = '-' + formatMoney(getDiscountAmount());
+      els.taxableSubtotalText.textContent = formatMoney(getTaxableSubtotal());
       els.gstText.textContent = formatMoney(getGST());
       els.totalText.textContent = formatMoney(getTotal());
     }
@@ -1761,6 +2049,7 @@
       });
       renderSidebar();
       updateHeader();
+      if (state.proposalOpen) buildProposalRows();
       const quoteChip = els.quoteChip;
       quoteChip.classList.remove('flash-total');
       void quoteChip.offsetWidth;
@@ -1786,6 +2075,7 @@
       state.cart = state.cart.filter((item) => item.cartId !== cartId);
       renderSidebar();
       updateHeader();
+      if (state.proposalOpen) buildProposalRows();
     }
 
     function resetCart() {
@@ -1793,6 +2083,7 @@
       state.cart = [];
       renderSidebar();
       updateHeader();
+      if (state.proposalOpen) buildProposalRows();
     }
 
     function buildProposalRows() {
@@ -1810,6 +2101,8 @@
         els.proposalRows.appendChild(tr);
       });
       els.proposalSubtotal.textContent = formatMoney(getSubtotal());
+      els.proposalDiscount.textContent = '-' + formatMoney(getDiscountAmount());
+      els.proposalTaxableSubtotal.textContent = formatMoney(getTaxableSubtotal());
       els.proposalGst.textContent = formatMoney(getGST());
       els.proposalTotal.textContent = formatMoney(getTotal());
       els.printDateLine.textContent = 'Date: ' + new Date().toLocaleDateString('en-IN');
@@ -1828,6 +2121,7 @@
       lines.push('Company: ' + (els.companyName.value || '-'));
       lines.push('Contact: ' + (els.contactNumber.value || '-'));
       lines.push('Address: ' + (els.siteAddress.value || '-'));
+      lines.push('Discount: ' + getDiscountPercent().toFixed(1).replace(/\.0$/, '') + '%');
       lines.push('------------------------------------------------');
       lines.push('QUOTATION SUMMARY');
       lines.push('------------------------------------------------');
@@ -1837,7 +2131,9 @@
         lines.push(`${index + 1} | ${item.name} | ${item.warranty || '-'} | ${value} | ${value}`);
       });
       lines.push('------------------------------------------------');
-      lines.push('Subtotal (excl. GST): ' + formatMoney(getSubtotal()));
+      lines.push('Gross Subtotal: ' + formatMoney(getSubtotal()));
+      lines.push('Discount (' + getDiscountPercent().toFixed(1).replace(/\.0$/, '') + '%): -' + formatMoney(getDiscountAmount()));
+      lines.push('Taxable Subtotal: ' + formatMoney(getTaxableSubtotal()));
       lines.push('GST @ 18%: ' + formatMoney(getGST()));
       lines.push('GRAND TOTAL (incl. GST): ' + formatMoney(getTotal()));
       lines.push('------------------------------------------------');
@@ -1868,16 +2164,29 @@
       window.print();
     }
 
-    async function copyProposal() {
-      try {
-        await navigator.clipboard.writeText(getProposalText());
-        els.copyProposalBtn.textContent = 'Copied';
-        window.setTimeout(() => {
-          els.copyProposalBtn.textContent = '📋 Copy Proposal Text';
-        }, 1200);
-      } catch (error) {
-        window.alert('Clipboard access was blocked by the browser.');
-      }
+    function normalizeDiscountInput(value) {
+      const percent = Number(value);
+      if (Number.isNaN(percent)) return 0;
+      return Math.min(100, Math.max(0, percent));
+    }
+
+    function handleDiscountChange() {
+      state.discountPercent = normalizeDiscountInput(els.discountPercent.value);
+      els.discountPercent.value = String(state.discountPercent);
+      updateHeader();
+      if (state.cart.length) buildProposalRows();
+    }
+
+    function shareOnWhatsApp() {
+      const text = getProposalText();
+      // WhatsApp's wa.me text param caps out in practice around ~4000-6000 chars
+      // depending on platform; trim long proposals so the link still opens cleanly.
+      const MAX_CHARS = 3500;
+      const trimmed = text.length > MAX_CHARS
+        ? text.slice(0, MAX_CHARS) + '\n...\n(Proposal trimmed — see attached PDF for full details)'
+        : text;
+      const url = 'https://wa.me/?text=' + encodeURIComponent(trimmed);
+      window.open(url, '_blank');
     }
 
     function handleUpsChange() {
@@ -1946,34 +2255,22 @@
       renderBatteryList();
     }
 
-    function bootstrap() {
-      setSelectOptions(els.upsBrand, 'All Brands', brandOrder.filter((brand) => UPS.some((item) => item.brand === brand)), 'ALL');
-      setSelectOptions(els.upsCapacity, 'kVA', uniqSorted(UPS, 'kva'), 'ALL');
-      setSelectOptions(els.upsPhase, 'Phase', uniqSorted(UPS, 'phase'), 'ALL');
-      setSelectOptions(els.upsVdc, 'VDC', uniqSorted(UPS, 'vdc'), 'ALL');
+    function setSyncStatus(mode, label) {
+      els.syncStatus.classList.remove('loading', 'live', 'error');
+      els.syncStatus.classList.add(mode);
+      els.syncLabel.textContent = label;
+    }
 
-      setSelectOptions(els.batteryType, 'Type', batteryTypeOrder.filter((type) => BATTERIES.some((item) => item.type === type)), 'ALL');
-      setSelectOptions(els.batteryBrand, 'Brand', batteryBrandOrder.filter((brand) => brand === 'OTHER' || BATTERIES.some((item) => item.brand === brand)), 'ALL');
-      setSelectOptions(els.batteryAh, 'AH', uniqSorted(BATTERIES, 'ah'), 'ALL');
+    function renderCatalogAndFilters() {
+      setSelectOptions(els.upsBrand, 'All Brands', brandOrder.filter((brand) => UPS.some((item) => item.brand === brand)), state.ups.brand);
+      setSelectOptions(els.upsCapacity, 'kVA', uniqSorted(UPS, 'kva'), state.ups.capacity);
+      setSelectOptions(els.upsPhase, 'Phase', uniqSorted(UPS, 'phase'), state.ups.phase);
+      setSelectOptions(els.upsVdc, 'VDC', uniqSorted(UPS, 'vdc'), state.ups.vdc);
 
-      els.upsBrand.addEventListener('change', handleUpsChange);
-      els.upsCapacity.addEventListener('change', handleUpsCapacityChange);
-      els.upsPhase.addEventListener('change', handleUpsPhaseChange);
-      els.upsVdc.addEventListener('change', handleUpsVdcChange);
-      els.batteryType.addEventListener('change', handleBatteryTypeChange);
-      els.batteryBrand.addEventListener('change', handleBatteryBrandChange);
-      els.batteryAh.addEventListener('change', handleBatteryAhChange);
-      els.finalizeBtn.addEventListener('click', openModal);
-      els.closeModalBtn.addEventListener('click', closeModal);
-      els.resetBtn.addEventListener('click', resetCart);
-      els.copyProposalBtn.addEventListener('click', copyProposal);
-      els.printProposalBtn.addEventListener('click', printProposal);
-      els.proposalModal.addEventListener('click', (event) => {
-        if (event.target === els.proposalModal) closeModal();
-      });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && state.proposalOpen) closeModal();
-      });
+      setSelectOptions(els.batteryType, 'Type', batteryTypeOrder.filter((type) => BATTERIES.some((item) => item.type === type)), state.battery.type);
+      setSelectOptions(els.batteryBrand, 'Brand', batteryBrandOrder.filter((brand) => brand === 'OTHER' || BATTERIES.some((item) => item.brand === brand)), state.battery.brand);
+      setSelectOptions(els.batteryAh, 'AH', uniqSorted(BATTERIES, 'ah'), state.battery.ah);
+
       renderUpsFilters();
       renderBatteryFilters();
       renderUpsList();
@@ -1981,6 +2278,77 @@
       renderAccessories();
       renderSidebar();
       updateHeader();
+      handleDiscountChange();
+    }
+
+    function wireEventsOnce() {
+      els.upsBrand.addEventListener('change', handleUpsChange);
+      els.upsCapacity.addEventListener('change', handleUpsCapacityChange);
+      els.upsPhase.addEventListener('change', handleUpsPhaseChange);
+      els.upsVdc.addEventListener('change', handleUpsVdcChange);
+      els.batteryType.addEventListener('change', handleBatteryTypeChange);
+      els.batteryBrand.addEventListener('change', handleBatteryBrandChange);
+      els.batteryAh.addEventListener('change', handleBatteryAhChange);
+      els.discountPercent.addEventListener('input', handleDiscountChange);
+      els.discountPercent.addEventListener('change', handleDiscountChange);
+      els.finalizeBtn.addEventListener('click', openModal);
+      els.closeModalBtn.addEventListener('click', closeModal);
+      els.resetBtn.addEventListener('click', resetCart);
+      els.whatsappProposalBtn.addEventListener('click', shareOnWhatsApp);
+      els.printProposalBtn.addEventListener('click', printProposal);
+      els.proposalModal.addEventListener('click', (event) => {
+        if (event.target === els.proposalModal) closeModal();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && state.proposalOpen) closeModal();
+      });
+      els.syncRefreshBtn.addEventListener('click', () => loadAndRender({ manual: true }));
+      els.retrySheetBtn.addEventListener('click', () => loadAndRender({ manual: true }));
+    }
+
+    async function loadAndRender(options) {
+      const manual = options && options.manual;
+      els.sheetErrorBanner.classList.remove('visible');
+      els.loadSpinner.style.display = '';
+      els.loadMessage.style.display = '';
+
+      if (manual) {
+        els.syncRefreshBtn.classList.add('spinning');
+      } else {
+        els.loadOverlay.classList.remove('hidden');
+      }
+      setSyncStatus('loading', 'Syncing prices…');
+
+      try {
+        await fetchSheetData();
+        buildEnrichedCatalogs();
+        renderCatalogAndFilters();
+        const stamp = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        setSyncStatus('live', 'Live · synced ' + stamp);
+        els.loadOverlay.classList.add('hidden');
+      } catch (error) {
+        console.error('Sheet sync failed:', error);
+        if (UPS.length || BATTERIES.length || ACCESSORIES.length) {
+          // We already have data from a previous successful load — keep showing it.
+          setSyncStatus('error', 'Sync failed · showing last loaded prices');
+          els.loadOverlay.classList.add('hidden');
+        } else {
+          // First load failed and we have nothing to show — block with retry.
+          setSyncStatus('error', 'Sync failed');
+          els.loadSpinner.style.display = 'none';
+          els.loadMessage.style.display = 'none';
+          els.sheetErrorDetail.textContent = error.message || 'Unknown error reaching the price sheet.';
+          els.sheetErrorBanner.classList.add('visible');
+          els.loadOverlay.classList.remove('hidden');
+        }
+      } finally {
+        els.syncRefreshBtn.classList.remove('spinning');
+      }
+    }
+
+    function bootstrap() {
+      wireEventsOnce();
+      loadAndRender({ manual: false });
     }
 
     bootstrap();
