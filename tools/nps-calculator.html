@@ -69,11 +69,9 @@
       width: min(260px, 46vw);
       height: 58px;
       border-radius: 14px;
-      background: #050816;
       display: flex;
       align-items: center;
       padding: 8px 14px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
       flex: 0 0 auto;
     }
 
@@ -1147,7 +1145,6 @@
         width: 220px;
         height: 58px;
         border-radius: 10px;
-        background: #050816 !important;
         padding: 8px 12px;
         margin-bottom: 8px;
       }
@@ -1264,7 +1261,7 @@
     <header class="header">
       <div class="brand-wrap">
         <div class="brand-icon">
-          <img src="../assets/automate-flow-ai-logo.png" alt="Automate Flow AI" />
+          <img src="../assets/automate-flow-ai-logo.png?v=2" alt="Automate Flow AI" />
         </div>
         <div class="brand-copy">
           <p>Parametric UPS & Battery Calculator</p>
@@ -1429,7 +1426,7 @@
       <div class="modal-print-content" id="proposalPrintArea">
         <div class="proposal-header-print">
           <div class="proposal-logo-print">
-            <img src="../assets/automate-flow-ai-logo.png" alt="Automate Flow AI" />
+            <img src="../assets/automate-flow-ai-logo.png?v=2" alt="Automate Flow AI" />
           </div>
           <p>Parametric UPS & Battery Configurator</p>
           <p id="printDateLine"></p>
@@ -1451,10 +1448,10 @@
         </div>
 
         <div class="modal-grid no-print">
-          <div class="field"><label for="customerName">Customer Name</label><input id="customerName" type="text" placeholder="Enter customer name"></div>
-          <div class="field"><label for="companyName">Company / Organization</label><input id="companyName" type="text" placeholder="Enter company"></div>
-          <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="tel" placeholder="Enter contact number"></div>
-          <div class="field"><label for="siteAddress">Site Address</label><input id="siteAddress" type="text" placeholder="Enter site address"></div>
+          <div class="field"><label for="customerName">Customer Name *</label><input id="customerName" type="text" placeholder="Enter customer name" required></div>
+          <div class="field"><label for="companyName">Company / Organization *</label><input id="companyName" type="text" placeholder="Enter company" required></div>
+          <div class="field"><label for="contactNumber">Contact Number *</label><input id="contactNumber" type="tel" placeholder="Enter contact number" required></div>
+          <div class="field"><label for="siteAddress">Site Address *</label><input id="siteAddress" type="text" placeholder="Enter site address" required></div>
         </div>
 
         <div>
@@ -2178,14 +2175,28 @@
     }
 
     function shareOnWhatsApp() {
+      const name = els.customerName.value.trim();
+      const company = els.companyName.value.trim();
+      const phone = els.contactNumber.value.trim();
+      const address = els.siteAddress.value.trim();
+      if (!name || !company || !phone || !address) {
+        window.alert('Please fill in all customer details (Name, Company, Contact Number, Site Address) before sharing.');
+        return;
+      }
+      const digits = phone.replace(/\D/g, '');
+      if (digits.length < 10) {
+        window.alert('Please enter a valid contact number with at least 10 digits.');
+        return;
+      }
+      const countryCode = digits.length === 10 ? '91' : '';
+      const fullNumber = countryCode + digits;
+      buildProposalRows();
       const text = getProposalText();
-      // WhatsApp's wa.me text param caps out in practice around ~4000-6000 chars
-      // depending on platform; trim long proposals so the link still opens cleanly.
       const MAX_CHARS = 3500;
       const trimmed = text.length > MAX_CHARS
         ? text.slice(0, MAX_CHARS) + '\n...\n(Proposal trimmed — see attached PDF for full details)'
         : text;
-      const url = 'https://wa.me/?text=' + encodeURIComponent(trimmed);
+      const url = 'https://wa.me/' + fullNumber + '?text=' + encodeURIComponent(trimmed);
       window.open(url, '_blank');
     }
 
